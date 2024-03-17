@@ -1,8 +1,8 @@
 ﻿
-namespace Rocky_DataAccess.Initializer
-{
-    public interface IDbInitializer
-    {
-        void Initialize();
-    }
-}
+//namespace Rocky_DataAccess.Initializer
+//{
+//    public interface IDbInitializer
+//    {
+//        void Initialize();
+//    }
+//}

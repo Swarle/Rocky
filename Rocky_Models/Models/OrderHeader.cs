@@ -9,7 +9,7 @@ namespace Rocky_Models.Models
         [Key]
         public int Id { get; set; }
 
-        public string CreatedByUserId { get; set; }
+        public int CreatedByUserId { get; set; }
 
         [ForeignKey("CreatedByUserId")]
         public ApplicationUser CreatedBy { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Rocky_Models.Models
 {
@@ -7,7 +8,9 @@ namespace Rocky_Models.Models
         [Key]
         public int Id { get; set; }
 
-        public string ApplicationUserId { get; set; }
+        public int ApplicationUserId { get; set; }
+
+        [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; }
 
         public int PostId { get; set; }

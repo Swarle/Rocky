@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Rocky_DataAccess;
-using Rocky_DataAccess.Initializer;
 using Rocky_DataAccess.Repository;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Utility;
@@ -30,22 +29,15 @@ namespace Rocky
                 option.Cookie.IsEssential = true;
             });
             services.AddMvc();
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddDefaultTokenProviders().AddDefaultUI()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.Configure<BrainTreeSettings>(Configuration.GetSection("BrainTree"));
             services.AddSingleton<IBrainTreeGate, BrainTreeGate>();
 
-            services.AddAuthentication().AddFacebook(Options =>
-            {
-                Options.AppId = "1075355417188254";
-                Options.AppSecret = "244aba1f2ae39156c4510e46ebefdf53";
-            });
+            services.AddAuthentication();
 
-            services.AddScoped<IDbInitializer, DbInitializer>();
+            //services.AddScoped<IDbInitializer, DbInitializer>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
@@ -58,7 +50,7 @@ namespace Rocky
             services.AddScoped<ILikeRepository, LikeRepository>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer dbInitializer)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -76,7 +68,7 @@ namespace Rocky
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            dbInitializer.Initialize();
+            //dbInitializer.Initialize();
             app.UseSession();
 
             app.UseEndpoints(endpoints =>

@@ -75,7 +75,8 @@ namespace Rocky.Controllers
 
             postVM.Post.Image = fileName + extension;
             postVM.Post.CreatedDate = DateTime.Now;
-            postVM.Post.ApplicationUserId = _userManager.GetUserId(User)!;
+            //TODO: Change user get method
+            //postVM.Post.ApplicationUserId = _userManager.GetUserId(User)!;
 
             _postRepository.Add(postVM.Post);
             _postRepository.Save();
@@ -88,7 +89,8 @@ namespace Rocky.Controllers
         [Authorize(Roles = WC.CastomerRole + "," + WC.AdminRole)]
         public IActionResult Like(int Id)
         {
-            var userId = _userManager.GetUserId(User)!;
+            //TODO: Change user get method
+            var userId = 5;
             var existing = _likeRepository.FirstOrDefault(x => x.ApplicationUserId == userId && x.PostId == Id);
 
             if (existing != null)

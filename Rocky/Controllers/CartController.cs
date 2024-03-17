@@ -118,7 +118,7 @@ namespace Rocky.Controllers
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-                applicationUser = _applicationUserRepository.FirstOrDefault(u => u.Id == claim.Value);
+                applicationUser = _applicationUserRepository.FirstOrDefault(u => u.UserName == claim.Value);
             }
 
 
@@ -161,7 +161,8 @@ namespace Rocky.Controllers
             {
                 OrderHeader orderHeader = new OrderHeader()
                 {
-                    CreatedByUserId = claim.Value,
+                    //TODO: Change user get method
+                    CreatedByUserId = 1,
                     FinalOrderTotal = ProductUserVM.ProductsList.Sum(x => x.TempSqFt * x.Price),
                     City = ProductUserVM.ApplicationUser.City,
                     StreetAddress = ProductUserVM.ApplicationUser.StreetAddress,
@@ -247,7 +248,8 @@ namespace Rocky.Controllers
 
                 InquiryHeader inquiryHeader = new InquiryHeader()
                 {
-                    ApplicationUserId = claim.Value,
+                    //TODO: Change user get method
+                    ApplicationUserId = 5,
                     FullName = ProductUserVM.ApplicationUser.FullName,
                     Email = ProductUserVM.ApplicationUser.Email,
                     PhoneNumber = ProductUserVM.ApplicationUser.PhoneNumber,
