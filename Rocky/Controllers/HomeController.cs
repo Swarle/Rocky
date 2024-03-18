@@ -56,6 +56,7 @@ namespace Rocky.Controllers
 
             return View(detailsVM);
         }
+
         [HttpPost,ActionName("Details")]
         public IActionResult DetailsPost(int Id, DetailsVM details)
         {

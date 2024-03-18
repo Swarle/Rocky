@@ -108,11 +108,11 @@
                                                     <h6 class="my-0">@Model.ProductsList[i].Name</h6>
                                                     @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
                                                     {
-                                                        <small class="text-muted">Sqft: @Model.ProductsList[i].TempSqFt</small>
+                                                        <small class="text-muted">Weight: @Model.ProductsList[i].TempSqFt</small>
                                                     }
                                                     else
                                                     {
-                                                        <small class="text-muted">Price per Sqft: $@Model.ProductsList[i].Price</small>
+                                                        <small class="text-muted">Price: $@Model.ProductsList[i].Price</small>
                                                     }
                                                 </div>
                                                 @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
@@ -131,15 +131,6 @@
                                         }
                                     </ul>
                                 </div>
-                                @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
-                                {
-                                    <div class="col-12">
-                                        <div class="container">
-                                            <div id="dropin-container"></div>
-                                            <input id="nonce" name="payment_method_nonce" type="hidden" />
-                                        </div>
-                                    </div>
-                                }
                             </div>
                         </div>
                     </div>
@@ -167,43 +158,8 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="https://js.braintreegateway.com/web/dropin/1.22.1/js/dropin.min.js"></script>
     <script>
+
         $(document).ready(function () {
-            var client_token = "@ViewBag.ClientToken";
-            var form = document.querySelector('#payment-form');
-
-            if (!client_token) {
-                console.error('Client token not available');
-                return;
-            }
-
-            braintree.dropin.create({
-                authorization: client_token,
-                container: '#dropin-container'
-            }, function (createErr, instance) {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault();
-
-                    if (createErr) {
-                        console.error(createErr);
-                        return;
-                    }
-
-                    if (!instance) {
-                        console.error('Instance not available');
-                        return;
-                    }
-
-                    instance.requestPaymentMethod(function (err, payload) {
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-
-                        document.querySelector('#nonce').value = payload.nonce;
-                        form.submit();
-                    });
-                });
-            });
 
             function validateInput() {
                 var app_name = document.getElementById("ApplicationUser_FullName").value;
@@ -240,6 +196,7 @@
                 return true;
             }
         });
+    
     </script>
 }
 

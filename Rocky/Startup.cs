@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Rocky.Services;
 using Rocky_DataAccess;
 using Rocky_DataAccess.Repository;
 using Rocky_DataAccess.Repository.IRepository;
+using Rocky_Models.Models;
 using Rocky_Utility;
-using Rocky_Utility.BrainTree;
 
 namespace Rocky
 {
@@ -30,15 +34,23 @@ namespace Rocky
             });
             services.AddMvc();
 
-            services.AddTransient<IEmailSender, EmailSender>();
+            //TODO:Fix email sender
+            //services.AddTransient<IEmailSender, EmailSender>();
 
-            services.Configure<BrainTreeSettings>(Configuration.GetSection("BrainTree"));
-            services.AddSingleton<IBrainTreeGate, BrainTreeGate>();
 
-            services.AddAuthentication();
-
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Account/Login");
+                    options.LogoutPath = new PathString("/Account/Logout");
+                });
             //services.AddScoped<IDbInitializer, DbInitializer>();
 
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IInquiryHeaderRepository, InquiryHeaderRepository>();

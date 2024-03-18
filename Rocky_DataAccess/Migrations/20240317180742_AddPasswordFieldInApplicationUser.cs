@@ -2,25 +2,28 @@
 
 #nullable disable
 
-namespace Rocky_DataAccess
+namespace Rocky_DataAccess.Migrations
 {
-    public partial class addPropertyShortDeskToProduct : Migration
+    /// <inheritdoc />
+    public partial class AddPasswordFieldInApplicationUser : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ShortDesc",
-                table: "Products",
+                name: "Password",
+                table: "ApplicationUsers",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ShortDesc",
-                table: "Products");
+                name: "Password",
+                table: "ApplicationUsers");
         }
     }
 }

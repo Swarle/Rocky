@@ -6,7 +6,6 @@ using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
 using Rocky_Models.ViewModels;
 using Rocky_Utility;
-using Rocky_Utility.BrainTree;
 
 namespace Rocky.Controllers
 {
@@ -15,17 +14,14 @@ namespace Rocky.Controllers
     {
         private readonly IOrderHeaderRepository _orderHeaderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
-        private readonly IBrainTreeGate _brainTreeGate;
 
         [BindProperty]
         public OrderVM OrderVM { get; set; }
 
-        public OrderController(IOrderHeaderRepository orderHeaderRepository, IOrderDetailRepository orderDetailRepository, 
-                               IBrainTreeGate brainTreeGate)
+        public OrderController(IOrderHeaderRepository orderHeaderRepository, IOrderDetailRepository orderDetailRepository)
         {
             _orderHeaderRepository = orderHeaderRepository;
             _orderDetailRepository = orderDetailRepository;
-            _brainTreeGate = brainTreeGate;
         }
 
         public IActionResult Index(string searchName = null, string searchEmail = null, string searchPhone = null, string Status = null)
@@ -97,17 +93,6 @@ namespace Rocky.Controllers
         {
             OrderHeader orderHeader = _orderHeaderRepository.FirstOrDefault(u => u.Id == OrderVM.OrderHeader.Id);
 
-            var gateway = _brainTreeGate.GetGateway();
-            Transaction transaction = gateway.Transaction.Find(orderHeader.TransactionId);
-
-            if (transaction.Status == TransactionStatus.AUTHORIZED || transaction.Status == TransactionStatus.SUBMITTED_FOR_SETTLEMENT)
-            {
-                Result<Transaction> resultvoid = gateway.Transaction.Void(orderHeader.TransactionId);
-            }
-            else
-            {
-                Result<Transaction> resultRefund = gateway.Transaction.Refund(orderHeader.TransactionId);
-            }
             orderHeader.OrderStatus = WC.StatusRefunded;
             _orderHeaderRepository.Save();
             TempData[WC.Success] = "Order Cancelled Successfully";

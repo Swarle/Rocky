@@ -9,11 +9,11 @@ using Rocky_DataAccess;
 
 #nullable disable
 
-namespace Rocky_DataAccess
+namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240317103057_ChangingDatabase")]
-    partial class ChangingDatabase
+    [Migration("20240317105359_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

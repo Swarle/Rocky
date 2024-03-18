@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Rocky.Services;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
 using Rocky_Models.ViewModels;
@@ -11,14 +12,14 @@ namespace Rocky.Controllers
     public class BlogController : Controller
     {
         private readonly IPostRepository _postRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILikeRepository _likeRepository;
-        public BlogController(IPostRepository postRepository, UserManager<IdentityUser> userManager,
+        public BlogController(IPostRepository postRepository, IUserService userService,
                               IWebHostEnvironment webHostEnvironment, ILikeRepository likeRepository) 
         {
             _postRepository = postRepository;
-            _userManager = userManager;
+            _userService = userService;
             _webHostEnvironment = webHostEnvironment;
             _likeRepository = likeRepository;
         }
@@ -75,8 +76,8 @@ namespace Rocky.Controllers
 
             postVM.Post.Image = fileName + extension;
             postVM.Post.CreatedDate = DateTime.Now;
-            //TODO: Change user get method
-            //postVM.Post.ApplicationUserId = _userManager.GetUserId(User)!;
+
+            postVM.Post.ApplicationUserId = _userService.GetUserId();
 
             _postRepository.Add(postVM.Post);
             _postRepository.Save();
@@ -89,8 +90,7 @@ namespace Rocky.Controllers
         [Authorize(Roles = WC.CastomerRole + "," + WC.AdminRole)]
         public IActionResult Like(int Id)
         {
-            //TODO: Change user get method
-            var userId = 5;
+            var userId = _userService.GetUserId();
             var existing = _likeRepository.FirstOrDefault(x => x.ApplicationUserId == userId && x.PostId == Id);
 
             if (existing != null)

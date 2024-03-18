@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace Rocky_DataAccess
+namespace Rocky_DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAttributesKeyAndFK : Migration
+    public partial class FixFKBug : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

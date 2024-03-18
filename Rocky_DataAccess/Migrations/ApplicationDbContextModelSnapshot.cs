@@ -8,7 +8,7 @@ using Rocky_DataAccess;
 
 #nullable disable
 
-namespace Rocky_DataAccess
+namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -34,10 +34,11 @@ namespace Rocky_DataAccess
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
                     b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -45,11 +46,16 @@ namespace Rocky_DataAccess
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("ApplicationUsers");
                 });
@@ -325,6 +331,34 @@ namespace Rocky_DataAccess
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Rocky_Models.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+                });
+
+            modelBuilder.Entity("Rocky_Models.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("Rocky_Models.Models.Role", "Role")
+                        .WithMany("ApplicationUsers")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Rocky_Models.Models.InquiryDetail", b =>
                 {
                     b.HasOne("Rocky_Models.Models.InquiryHeader", "InquiryHeader")
@@ -429,6 +463,11 @@ namespace Rocky_DataAccess
             modelBuilder.Entity("Rocky_Models.Models.Post", b =>
                 {
                     b.Navigation("Likes");
+                });
+
+            modelBuilder.Entity("Rocky_Models.Models.Role", b =>
+                {
+                    b.Navigation("ApplicationUsers");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,14 +1,13 @@
 ﻿using Braintree;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
 using Rocky_Utility;
-using Rocky_Utility.BrainTree;
 using Rocky_Models.ViewModels;
 using System.Security.Claims;
 using System.Text;
+using Rocky.Services;
 
 namespace Rocky.Controllers
 {
@@ -22,22 +21,20 @@ namespace Rocky.Controllers
         private readonly IInquiryDetailRepository _inquiryDetailRepository;
         private readonly IOrderHeaderRepository _orderHeaderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IUserService _userService;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public readonly IBrainTreeGate _brainTreeGate;
-        private readonly IEmailSender _emailSender;
 
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
 
-        public CartController(IWebHostEnvironment webHostEnvironment, IEmailSender emailSender, IProductRepository productRepository,
+        //TODO:Fix email sender
+        public CartController(IWebHostEnvironment webHostEnvironment  /*IEmailSender emailSender*/, IProductRepository productRepository,
                               IInquiryHeaderRepository inquiryHeaderRepository, IInquiryDetailRepository inquiryDetailRepository,
                               IApplicationUserRepository applicationUserRepository, IOrderHeaderRepository orderHeaderRepository,
-                              IOrderDetailRepository orderDetailRepository, IBrainTreeGate brainTreeGate)
+                              IOrderDetailRepository orderDetailRepository, IUserService userService)
         {
             _webHostEnvironment = webHostEnvironment;
-            _brainTreeGate = brainTreeGate;
-            _emailSender = emailSender;
 
             _productRepository = productRepository;
             _applicationUserRepository = applicationUserRepository;
@@ -45,6 +42,7 @@ namespace Rocky.Controllers
             _inquiryDetailRepository = inquiryDetailRepository;
             _orderHeaderRepository = orderHeaderRepository;
             _orderDetailRepository = orderDetailRepository;
+            _userService = userService; 
         }
         public IActionResult Index()
         {
@@ -107,11 +105,7 @@ namespace Rocky.Controllers
                 {
                     applicationUser = new ApplicationUser();
                 }
-
-                var gateway = _brainTreeGate.GetGateway();
-                var clientToken = gateway.ClientToken.Generate();
-                ViewBag.ClientToken = clientToken;
-
+                
             }
             else
             {
@@ -154,15 +148,11 @@ namespace Rocky.Controllers
         [ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(IFormCollection collection, ProductUserVM productUserVm)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-
             if(User.IsInRole(WC.AdminRole))
             {
                 OrderHeader orderHeader = new OrderHeader()
                 {
-                    //TODO: Change user get method
-                    CreatedByUserId = 1,
+                    CreatedByUserId = _userService.GetUserId(),
                     FinalOrderTotal = ProductUserVM.ProductsList.Sum(x => x.TempSqFt * x.Price),
                     City = ProductUserVM.ApplicationUser.City,
                     StreetAddress = ProductUserVM.ApplicationUser.StreetAddress,
@@ -191,31 +181,12 @@ namespace Rocky.Controllers
                 }
                 _orderDetailRepository.Save();
 
-                string nonceFromTheClient = collection["payment_method_nonce"];
+                //TODO: Delete card payment
+                
+                orderHeader.TransactionId = Guid.NewGuid().ToString();
+                orderHeader.OrderStatus = WC.StatusApproved;
 
-                var request = new TransactionRequest
-                {
-                    Amount = Convert.ToDecimal(orderHeader.FinalOrderTotal),
-                    PaymentMethodNonce = nonceFromTheClient,
-                    OrderId = orderHeader.Id.ToString(),
-                    Options = new TransactionOptionsRequest
-                    {
-                        SubmitForSettlement = true
-                    }
-                };
 
-                var gateway = _brainTreeGate.GetGateway();
-                Result<Transaction> result = gateway.Transaction.Sale(request);
-
-                if (result.Target.ProcessorResponseText == "Approved")
-                {
-                    orderHeader.TransactionId = result.Target.Id;
-                    orderHeader.OrderStatus = WC.StatusApproved;
-                }
-                else
-                {
-                    orderHeader.OrderStatus = WC.StatusCancelled;
-                }
                 _orderHeaderRepository.Save();
 
                 return RedirectToAction(nameof(InquiryConfirmation), new { id = orderHeader.Id });
@@ -244,12 +215,11 @@ namespace Rocky.Controllers
                     ProductUserVM.ApplicationUser.PhoneNumber,
                     productListSB.ToString());
 
-                await _emailSender.SendEmailAsync(WC.EmailAdmin, subject, messageBody);
 
                 InquiryHeader inquiryHeader = new InquiryHeader()
                 {
                     //TODO: Change user get method
-                    ApplicationUserId = 5,
+                    ApplicationUserId = _userService.GetUserId(),
                     FullName = ProductUserVM.ApplicationUser.FullName,
                     Email = ProductUserVM.ApplicationUser.Email,
                     PhoneNumber = ProductUserVM.ApplicationUser.PhoneNumber,
