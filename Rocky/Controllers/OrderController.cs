@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Rocky.Infrastructure;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
 using Rocky_Models.ViewModels;
@@ -9,7 +10,7 @@ using Rocky_Utility;
 
 namespace Rocky.Controllers
 {
-    [Authorize(Roles = WC.AdminRole)]
+    [OwnAuthorize(WC.AdminRole)]
     public class OrderController : Controller
     {
         private readonly IOrderHeaderRepository _orderHeaderRepository;

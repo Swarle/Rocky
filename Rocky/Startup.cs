@@ -33,11 +33,7 @@ namespace Rocky
                 option.Cookie.IsEssential = true;
             });
             services.AddMvc();
-
-            //TODO:Fix email sender
-            //services.AddTransient<IEmailSender, EmailSender>();
-
-
+            
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -47,6 +43,7 @@ namespace Rocky
             //services.AddScoped<IDbInitializer, DbInitializer>();
 
             services.AddHttpContextAccessor();
+
 
             services.AddScoped<IUserService, UserService>();
 
@@ -64,6 +61,8 @@ namespace Rocky
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

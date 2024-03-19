@@ -1,5 +1,7 @@
 ﻿@model List<Rocky_Models.Models.Product>
 @using Rocky_Utility
+@using Rocky.Services
+@inject IUserService _userService
 @if (Model.Count() > 0)
 {
     <form method="post">
@@ -23,7 +25,7 @@
                                 <div class="row" style="color:#821f3d">
                                     <div class="col-lg-2">
                                     </div>
-                                    @if (User.IsInRole(WC.AdminRole))
+                                    @if (_userService.IsInRole(WC.AdminRole))
                                     {
                                         <div class="col-12 col-lg-3">
                                             Product Details
@@ -38,7 +40,7 @@
                                     <div class="col-12 col-lg-2">
                                         Price per sqft
                                     </div>
-                                    @if (User.IsInRole(WC.AdminRole))
+                                    @if (_userService.IsInRole(WC.AdminRole))
                                     {
                                         <div class="col-6 col-lg-2">
                                             Sqft
@@ -63,7 +65,7 @@
                                     <div class="col-4 col-md-2 text-center py-2">
                                         <img src="@WC.ImagePath@Model[i].Image" class="rounded" width="100%" />
                                     </div>
-                                    @if (User.IsInRole(WC.AdminRole))
+                                    @if (_userService.IsInRole(WC.AdminRole))
                                     {
 
                                         <div class="col-8 col-lg-3">
@@ -82,7 +84,7 @@
                                         <span style="font-size:17px;"> $@Model[i].Price</span>/ sqft
 
                                     </div>
-                                    @if (User.IsInRole(WC.AdminRole))
+                                    @if (_userService.IsInRole(WC.AdminRole))
                                     {
                                         <div class="col-4 col-lg-2 pt-lg-4" style="font-size:11px;">
                                             <input type="text" asp-for="@Model[i].TempSqFt" class="form-control" />
@@ -102,7 +104,7 @@
                                 <hr />
                             }
 
-                            @if (User.IsInRole(WC.AdminRole))
+                            @if (_userService.IsInRole(WC.AdminRole))
                             {
                                 <div class="row">
                                     <div class="col-12 text-right pr-4" style="color:#821f3d">
@@ -115,7 +117,7 @@
                             <div class="row">
 
                                 <div class="col-6 col-md-3 offset-md-6">
-                                    @if (User.IsInRole(WC.AdminRole))
+                                    @if (_userService.IsInRole(WC.AdminRole))
                                     {
                                         <input type="submit" asp-action="UpdateCart" formmethod="post" name="Update" value="Update Cart"
                                        class="btn btn-info form-control" />

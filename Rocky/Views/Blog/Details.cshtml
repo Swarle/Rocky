@@ -1,5 +1,7 @@
 ﻿@model Rocky_Models.Models.Post
 @using Rocky_Utility
+@using Rocky.Services
+@inject IUserService _userService
 <link href="~/css/blog.css" rel="stylesheet" />
 
 
@@ -26,7 +28,7 @@
                 <i class="like-icon fas fa-heart"></i>
             </button>
         </form>
-        @if (User.IsInRole("Admin"))
+        @if (_userService.IsInRole(WC.AdminRole))
         {
             <a asp-controller="Blog" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary mx-2">
                 <i class="fas fa-edit"></i>

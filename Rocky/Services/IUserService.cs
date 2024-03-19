@@ -11,5 +11,7 @@ namespace Rocky.Services
         public bool IsUserSignedIn();
         public int GetUserId();
         public string GetUserName();
+
+        public bool IsInRole(string roleName);
     }
 }

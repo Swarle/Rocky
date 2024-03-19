@@ -7,12 +7,13 @@ using Rocky_Utility;
 using Rocky_Models.ViewModels;
 using System.Security.Claims;
 using System.Text;
+using Rocky.Infrastructure;
 using Rocky.Services;
 
 namespace Rocky.Controllers
 {
 
-    [Authorize]
+    [OwnAuthorize]
     public class CartController : Controller
     {
         private readonly IProductRepository _productRepository;
@@ -28,8 +29,7 @@ namespace Rocky.Controllers
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
 
-        //TODO:Fix email sender
-        public CartController(IWebHostEnvironment webHostEnvironment  /*IEmailSender emailSender*/, IProductRepository productRepository,
+        public CartController(IWebHostEnvironment webHostEnvironment, IProductRepository productRepository,
                               IInquiryHeaderRepository inquiryHeaderRepository, IInquiryDetailRepository inquiryDetailRepository,
                               IApplicationUserRepository applicationUserRepository, IOrderHeaderRepository orderHeaderRepository,
                               IOrderDetailRepository orderDetailRepository, IUserService userService)
@@ -89,7 +89,7 @@ namespace Rocky.Controllers
         {
             ApplicationUser applicationUser;
 
-            if (User.IsInRole(WC.AdminRole))
+            if (_userService.IsInRole(WC.AdminRole))
             {
                 if (HttpContext.Session.Get<int>(WC.SessionInquiryId) != 0)
                 {
@@ -109,10 +109,9 @@ namespace Rocky.Controllers
             }
             else
             {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                var userName = _userService.GetUserName();
 
-                applicationUser = _applicationUserRepository.FirstOrDefault(u => u.UserName == claim.Value);
+                applicationUser = _applicationUserRepository.FirstOrDefault(u => u.UserName == userName);
             }
 
 
@@ -148,7 +147,7 @@ namespace Rocky.Controllers
         [ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(IFormCollection collection, ProductUserVM productUserVm)
         {
-            if(User.IsInRole(WC.AdminRole))
+            if(_userService.IsInRole(WC.AdminRole))
             {
                 OrderHeader orderHeader = new OrderHeader()
                 {
@@ -181,8 +180,6 @@ namespace Rocky.Controllers
                 }
                 _orderDetailRepository.Save();
 
-                //TODO: Delete card payment
-                
                 orderHeader.TransactionId = Guid.NewGuid().ToString();
                 orderHeader.OrderStatus = WC.StatusApproved;
 
@@ -218,7 +215,6 @@ namespace Rocky.Controllers
 
                 InquiryHeader inquiryHeader = new InquiryHeader()
                 {
-                    //TODO: Change user get method
                     ApplicationUserId = _userService.GetUserId(),
                     FullName = ProductUserVM.ApplicationUser.FullName,
                     Email = ProductUserVM.ApplicationUser.Email,

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Rocky.Infrastructure;
 using Rocky.Services;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
@@ -24,8 +25,6 @@ namespace Rocky.Controllers
 
         public IActionResult Register()
         {
-            Console.WriteLine(Request.Headers["X-Forwarded-For"].ToString());
-
             return View();
         }
 
@@ -43,7 +42,7 @@ namespace Rocky.Controllers
                     Password = model.Password
                 };
 
-                if (HttpContext.User.IsInRole(WC.AdminRole))
+                if (_userService.IsInRole(WC.AdminRole))
                 {
                     user.Role = _roleRepository.FirstOrDefault(r => r.RoleName == WC.AdminRole);
                 }
@@ -103,7 +102,7 @@ namespace Rocky.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            if (User.Identity.IsAuthenticated)
+            if (_userService.IsUserSignedIn())
             {
                 await _userService.LogoutAsync();
                 return RedirectToAction("Index", "Home");

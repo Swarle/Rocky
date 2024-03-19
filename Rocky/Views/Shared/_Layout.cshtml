@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Rocky.Services
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IUserService _userService
 @using Rocky_Utility
 @using Rocky_Models.Models
 
@@ -42,7 +44,7 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Blog" asp-action="Index">Posts</a>
                         </li>
-                        @if (User.IsInRole(WC.AdminRole))
+                        @if (_userService.IsInRole(WC.AdminRole))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

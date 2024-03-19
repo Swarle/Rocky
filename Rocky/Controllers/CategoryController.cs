@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Rocky.Infrastructure;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
 using Rocky_Utility;
 
 namespace Rocky.Controllers
 {
-    [Authorize(Roles = WC.AdminRole)]
+    [OwnAuthorize(WC.AdminRole)]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;

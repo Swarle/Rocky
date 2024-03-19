@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Rocky_Models.Models;
 using Rocky_Models.ViewModels;
 using Rocky_Utility;
 using Rocky_DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Rocky.Infrastructure;
 
 namespace Rocky.Controllers
 {
-    [Authorize(Roles = WC.AdminRole)]
+    [OwnAuthorize(WC.AdminRole)]
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;

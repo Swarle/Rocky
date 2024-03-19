@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Rocky.Infrastructure;
 using Rocky.Services;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models.Models;
@@ -51,7 +52,7 @@ namespace Rocky.Controllers
             return View(posts);
         }
 
-        [Authorize(Roles = WC.AdminRole)]
+        [OwnAuthorize(WC.AdminRole)]
         public IActionResult Create()
         {
             var postVM = new PostVM();
@@ -59,7 +60,7 @@ namespace Rocky.Controllers
             return View(postVM);
         }
 
-        [Authorize(Roles = WC.AdminRole)]
+        [OwnAuthorize(WC.AdminRole)]
         [HttpPost]
         public IActionResult Create(PostVM postVM)
         {
@@ -87,7 +88,7 @@ namespace Rocky.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = WC.CastomerRole + "," + WC.AdminRole)]
+        [OwnAuthorize()]
         public IActionResult Like(int Id)
         {
             var userId = _userService.GetUserId();
@@ -133,7 +134,7 @@ namespace Rocky.Controllers
             return View(post);
         }
 
-        [Authorize(Roles = WC.AdminRole)]
+        [OwnAuthorize(WC.AdminRole)]
         public IActionResult Edit(int Id)
         {
             PostVM postVM = new PostVM();
@@ -146,7 +147,7 @@ namespace Rocky.Controllers
 
         }
 
-        [Authorize(Roles = WC.AdminRole)]
+        [OwnAuthorize(WC.AdminRole)]
         [HttpPost]
         public IActionResult Edit(PostVM postVM)
         {
@@ -189,7 +190,7 @@ namespace Rocky.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = WC.AdminRole)]
+        [OwnAuthorize(WC.AdminRole)]
         public IActionResult Delete(int Id)
         {
             if (Id <= 0)

@@ -10,10 +10,10 @@ namespace Rocky_Utility
         public const string SessionCart = "ShoppingCartSession";
         public const string SessionInquiryId = "InquirySession";
 
+        public const string UserCookie = "UserCookie";
+
         public const string AdminRole = "Admin";
         public const string CastomerRole = "Customer";
-
-        public const string EmailAdmin = "denys.rubel@nure.ua";
 
         public const string CategoryName = "Category";
 

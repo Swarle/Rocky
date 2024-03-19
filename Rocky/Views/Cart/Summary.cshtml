@@ -1,4 +1,8 @@
-﻿@model Rocky_Models.ViewModels.ProductUserVM
+﻿@using Rocky.Services
+@using Rocky_Utility
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Rocky_Models.ViewModels.ProductUserVM
+@inject IUserService _userService
 
 <form method="post" id="payment-form">
     <br />
@@ -47,7 +51,7 @@
                                         <input asp-for="ApplicationUser.Email" required type="text" class="form-control" />
                                     </div>
                                 </div>
-                                @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                @if (_userService.IsInRole(WC.AdminRole))
                                 {
 
                                     <div class="row my-1">
@@ -106,7 +110,7 @@
                                             <li class="list-group-item d-flex justify-content-between">
                                                 <div>
                                                     <h6 class="my-0">@Model.ProductsList[i].Name</h6>
-                                                    @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                                    @if (_userService.IsInRole(WC.AdminRole))
                                                     {
                                                         <small class="text-muted">Weight: @Model.ProductsList[i].TempSqFt</small>
                                                     }
@@ -115,14 +119,14 @@
                                                         <small class="text-muted">Price: $@Model.ProductsList[i].Price</small>
                                                     }
                                                 </div>
-                                                @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                                @if (_userService.IsInRole(WC.AdminRole))
                                                 {
                                                     <span class="text-muted">$@(Model.ProductsList[i].Price * Model.ProductsList[i].TempSqFt)</span>
                                                 }
                                             </li>
                                             orderTotal += Model.ProductsList[i].Price * Model.ProductsList[i].TempSqFt;
                                         }
-                                        @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                                        @if (_userService.IsInRole(WC.AdminRole))
                                         {
                                             <li class="list-group-item d-flex justify-content-between bg-light">
                                                 <small class="text-info"> Total (USD)</small>
@@ -138,7 +142,7 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-12 col-md-5 offset-md-7">
-                            @if (User.IsInRole(Rocky_Utility.WC.AdminRole))
+                            @if (_userService.IsInRole(WC.AdminRole))
                             {
                                 <button class="btn btn-success form-control" onclick="validateInput()" id="submit-button">Submit Order</button>
                             }

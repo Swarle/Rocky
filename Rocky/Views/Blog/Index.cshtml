@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<Rocky_Models.Models.Post>
 @using Rocky_Utility;
+@using Rocky.Services
+@inject IUserService _userService
 <link href="~/css/blog.css" rel="stylesheet"/>
 
 <div class="container">
-    @if (User.IsInRole("Admin")) 
+    @if (_userService.IsInRole(WC.AdminRole))
     {
         <div class="row mt-4">
             <div class="col">
